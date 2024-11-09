@@ -1,0 +1,177 @@
+REAL- TIME EXAMPLE-1:         ++++++++SQL Real Time Scenario Use Cases | Phone Display Current Time ++++++++++++++++++++++
+==================
+SELECT TO_CHAR(SYSDATE,'DAY')FROM DUAL
+UNION ALL
+SELECT TO_CHAR(SYSDATE,'HH:MI') FROM DUAL
+UNION ALL
+SELECT TO_CHAR(SYSDATE,'MONTH DD') FROM DUAL
+UNION ALL
+SELECT PERCENTAGE  || '%' FROM CHARGE_PERCENTAGE_TABLE WHERE PHONE=9866855180;
+
+
+SELECT*FROM CHARGE_PERCENTAGE_TABLE;
+CREATE TABLE CHARGE_PERCENTAGE_TABLE(PERCENTAGE  NUMBER(5),
+PHONE NUMBER(20));
+
+INSERT INTO  CHARGE_PERCENTAGE_TABLE VALUES( 68,9866855180);
+INSERT INTO  CHARGE_PERCENTAGE_TABLE VALUES( 72,9642661526);
+INSERT INTO  CHARGE_PERCENTAGE_TABLE VALUES( 90,6301826217);
+INSERT INTO  CHARGE_PERCENTAGE_TABLE VALUES( 100,8142752958);
+===================================================================================================================================================================
+
+
+SELECT SYSDATE FROM DUAL;
+SELECT TRUNC(SYSDATE,'YEAR') FROM DUAL;
+SELECT TO_CHAR(SYSDATE,'MON') FROM DUAL;
+SELECT SYSDATE,ADD_MONTHS(SYSDATE,2) FROM DUAL; 
+
+SELECT  TO_CHAR(ADD_MONTHS(TRUNC(SYSDATE,'YEAR'),LEVEL-1),'MON')   MONTHS  FROM DUAL CONNECT BY LEVEL<=12;
+
+SELECT  TO_CHAR(ADD_MONTHS(TRUNC(SYSDATE,'YEAR'),LEVEL),'MON')   MONTH  FROM DUAL CONNECT BY LEVEL<=12;
+
+========================================================================================================
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+REAL TIME EXAMPLE ==2:---
+>>>>>>>>>>>>>>BUS TICKET STATUS REAL TIME SCENARIO<<<<<<<<<<
+
+SQL RealTime Use Case | Bus Tickets Status
+Condition 1: 
+Total_Seats = Seats_Sold  --- Bus is Full
+Total_Seats are less than Seats_Sold  --- OverBooked
+Total_Seats are greater than Seats_Sold  --- Seats Available
++++++++++++++++++++++++========================================================
+create table Bus_details_T
+as
+select 1234 Bus_number,200 Total_seats,200 seats_sold from dual
+union all
+select 1235,150,140 from dual
+union all
+select 1236,100,120 from dual
+union all
+select 1237,300,300 from dual
+union all
+select  1238,120,100 from dual;
+select*from Bus_Details_T;
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+select  case when 1=10 then 1
+                   when 2=20 then 2
+                   else 10 end from dual;
+______________________________________________________________________________________________
+select Bus_Number,Total_Seats,seats_sold, case 
+when Total_seats=seats_sold then 'Bus is Full' 
+when total_seats<seats_sold then 'OverBooked'
+when (total_seats>seats_sold  and (total_seats-seats_sold)<=10) then 'Hurry Up,Limited Seats'
+when total_seats>seats_sold then 'Seats are Avaliable'
+end  status
+from Bus_Details_T;
+---------------------------------------------------------------------------------------------------------------------------------------------------
+update Bus_Details_T set seats_sold=115 where Bus_number=1238;
+select*from Bus_Details_T;
+=========================================================================================
+
+================================REAL TIME REQUIREMENT=====================================
+   --Requirement:
+--To generate Credit Card Statement using SQL 
+
+--TOPICS:
+--DDL,DML,TCL,DRL 
+--UPPER, To_Char, SUBSTR, EXTRACT, FILTERING, ||, CONCAT
+
+
+
+create table detailss(phone_num  number,credit_card_num  number,bank  varchar2(10),bill_gen_date  date,due_date  date,due_amount  number(20,2));
+insert into detailss values(9703180969,1111222233334567,'idbi','29-may-23','06-jun-23',23120.75);
+insert into detailss values(9999999999,1111222233331234,'hdfc','29-may-23','06-jun-23',3320);
+select*from detailss;
+select  'statement for the month of '||  to_char(bill_gen_date,'fmmonth')||'  for your  '||
+upper(bank)||   '  bank credit card xxxx-'|| 
+substr(credit_card_num,-4,4)||   '  has been generated. Total due: Rs.'||
+to_char(due_amount,'fm99,999.00')||' to be paid by '||
+to_char(due_date,'fmmonth  dd, yyyy.'),
+c.*
+from detailss  c  where phone_num=9703180969;
+======================================================================================
+select  'statement for the month of '||  to_char(bill_gen_date,'fmmonth')||'  for your  '||
+upper(bank)||   '  Bank credit card xxxx-'|| 
+substr(credit_card_num,-4,4)||   '  has been generated. Total due: Rs.'||
+to_char(due_amount,'fm99,999.00')||' to be paid by '||
+to_char(due_date,'fmmonth  dd, yyyy.'),
+c.*
+from detailss  c  where phone_num=9999999999;
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+=============================================================================================
+REAL-TIME EXAMPLE-4:
+--------------------
+
+Case Statement Use Case
+(select,initcap,case,column alias,= in >=
+-------------Sample Data:
+CREATE TABLE VACCINE_DETAIL(NAME  VARCHAR2(100),
+                             DOSES NUMBER);
+
+INSERT INTO VACCINE_DETAIL VALUES('Praveen',1);
+INSERT INTO VACCINE_DETAIL VALUES('KuMAR',2);
+INSERT INTO VACCINE_DETAIL VALUES('RAJ',3);
+INSERT INTO VACCINE_DETAIL VALUES('Ravi',4);
+INSERT INTO VACCINE_DETAIL VALUES('Suresh',0);
+INSERT INTO VACCINE_DETAIL VALUES('RaJU',5);
+select*from vaccine_detail;
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ DISPLAY THE  RESULTS AS ABOVE WITH SAME COLUMN ALIAS AND DATA AS EXPECTED WITH UPPER AND LOWER CASE DATA AS IS
+ 
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ SELECT INITCAP('PRAVEEN KUMAR')    "NAME OF  EMP" FROM DUAL;
+ SELECT NAME,DOSES,
+ CASE WHEN DOSES=0 THEN  'NOT YET VACCINATED' 
+  WHEN DOSES=1 THEN  'PARTIALLY VACCINATED' 
+    WHEN DOSES=2 THEN  'FULLY   VACCINATED' 
+ -- WHEN DOSES=3 THEN    'BOOSTER DOSE ' 
+  --WHEN DOSES=4 THEN  'BOOSTER DOSE ' 
+  --  WHEN DOSES=5 THEN  'BOOSTER DOSE ' 
+  --WHEN DOSES IN  (3,4,5) THEN  'BOOSTER DOSE'
+  WHEN  DOSES >=3 THEN   'BOOSTER DOSE'
+ END  "VACCINE DOSE STATUS"
+ FROM VACCINE_DETAIL;
+ 
+ INSERT  INTO VACCINE_DETAIL VALUES('AKHILA',7);
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+--------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------
+REAL-TIME EXAMPLE-5:
+____________________
+
+####SQL Real Time Use Case || Password Expiration SQL Query
+Needs to write an SQL Query, to get passwords which are going to Expiry in 30 Days, 60 Days and 90 Days.
+CONCEPTS::<<CTAS,DATEDIFF,CURRENT DATE ,TO_CHAR,CASE,SET OPERATORS,COLUMN ALIAS
+-----------------------------------------------------------------------------------------------------------
+CREATE TABLE:
+-------------
+CREATE TABLE TEST_DATA 
+AS
+ SELECT 1 EMP_ID,CURRENT_DATE+29 PWD_EXPIRY_DATE FROM DUAL
+ UNION ALL
+  SELECT 2 EMP_ID,CURRENT_DATE+30 PWD_EXPIRY_DATE FROM DUAL
+  UNION ALL
+    SELECT 3 EMP_ID,CURRENT_DATE+31 PWD_EXPIRY_DATE FROM DUAL
+    UNION ALL
+      SELECT 4 EMP_ID,CURRENT_DATE+60 PWD_EXPIRY_DATE FROM DUAL
+      UNION ALL
+        SELECT 5 EMP_ID,CURRENT_DATE+59 PWD_EXPIRY_DATE FROM DUAL
+        UNION ALL
+          SELECT 6 EMP_ID,CURRENT_DATE+78 PWD_EXPIRY_DATE FROM DUAL
+          UNION ALL
+            SELECT 7 EMP_ID,CURRENT_DATE+90 PWD_EXPIRY_DATE FROM DUAL;
+
+SELECT*FROM TEST_DATA;
+ __________________________________________________________________________________________
+ ____________________________________________________________________________________
+ SELECT  EMP_ID,TO_CHAR(PWD_EXPIRY_DATE,'DD-MON-YYYY' )  PWD_EXPIRY_DATE,
+ TRUNC(PWD_EXPIRY_DATE- CURRENT_DATE )   DT,
+ CASE WHEN  (PWD_EXPIRY_DATE-CURRENT_DATE) <=30 THEN 1  ELSE 0 END  "30 DAYS EXPIRY",
+  CASE WHEN  (PWD_EXPIRY_DATE-CURRENT_DATE) BETWEEN 31 AND 60 THEN 1  ELSE 0 END  "60 DAYS EXPIRY",
+   CASE WHEN  (PWD_EXPIRY_DATE-CURRENT_DATE)  BETWEEN 61 AND 90 THEN 1  ELSE 0 END  "90 DAYS EXPIRY"
+ FROM TEST_DATA;
+ 
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++==
